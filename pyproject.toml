@@ -1,0 +1,20 @@
+[project]
+name = "biomed-mcp"
+version = "0.1.0"
+description = "MCP server federating PubMed, Europe PMC and Semantic Scholar, with an evidence-grounded agent harness."
+requires-python = ">=3.11"
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B", "SIM", "ANN"]
+ignore = ["ANN401"]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/*" = ["ANN"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+asyncio_mode = "auto"
