@@ -1,11 +1,9 @@
--- Applied once on first run. Every statement is IF NOT EXISTS so it is safe to re-run.
-
--- WAL persists on the database file: lets the Streamlit UI read while the harness writes.
+-- WAL lets the Streamlit UI read while the agent writes.
 PRAGMA journal_mode = WAL;
 
 CREATE TABLE IF NOT EXISTS api_cache (
   cache_key   TEXT PRIMARY KEY,          -- source + sha256(params)
-  payload     TEXT NOT NULL,             -- raw JSON
+  payload     TEXT NOT NULL,
   created_at  INTEGER NOT NULL,
   ttl_seconds INTEGER NOT NULL
 );
@@ -20,7 +18,7 @@ CREATE TABLE IF NOT EXISTS papers (
   authors    TEXT,
   year       INTEGER,
   journal    TEXT,
-  sources    TEXT,                       -- which APIs returned it
+  sources    TEXT,
   fetched_at INTEGER
 );
 CREATE UNIQUE INDEX IF NOT EXISTS idx_papers_pmid ON papers(pmid) WHERE pmid IS NOT NULL;
@@ -31,7 +29,7 @@ CREATE TABLE IF NOT EXISTS sessions (
   created_at  INTEGER,
   updated_at  INTEGER,
   token_total INTEGER DEFAULT 0,
-  summary     TEXT                       -- compacted history block
+  summary     TEXT
 );
 
 CREATE TABLE IF NOT EXISTS turns (
@@ -44,12 +42,11 @@ CREATE TABLE IF NOT EXISTS turns (
   compacted  INTEGER DEFAULT 0,          -- 1 once folded into sessions.summary
   created_at INTEGER
 );
--- Context assembly reads exactly this: uncompacted turns for one session, in order.
 CREATE INDEX IF NOT EXISTS idx_turns_session ON turns(session_id, compacted, id);
 
 CREATE TABLE IF NOT EXISTS facts (
   id             INTEGER PRIMARY KEY AUTOINCREMENT,
-  fact           TEXT NOT NULL,          -- stable user preference/topic
+  fact           TEXT NOT NULL,
   source_session TEXT,
   active         INTEGER DEFAULT 1,
   created_at     INTEGER
@@ -65,8 +62,6 @@ CREATE TABLE IF NOT EXISTS evidence (
 );
 CREATE INDEX IF NOT EXISTS idx_evidence_session ON evidence(session_id);
 
--- Verifier output. Persisted so the grounding eval scores stored verdicts
--- instead of re-running the whole pipeline.
 CREATE TABLE IF NOT EXISTS claims (
   id            INTEGER PRIMARY KEY AUTOINCREMENT,
   session_id    TEXT REFERENCES sessions(id),

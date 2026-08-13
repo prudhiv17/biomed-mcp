@@ -1,33 +1,25 @@
-# Secrets
 .env
-
-# Virtual environment
 .venv/
 venv/
 
-# Runtime database (schema.sql is committed; the populated db is not)
 data/
 *.db
 *.db-wal
 *.db-shm
 
-# Python
 __pycache__/
 *.py[cod]
 *.egg-info/
 build/
 dist/
 
-# Tooling caches
 .pytest_cache/
 .ruff_cache/
 .mypy_cache/
 
-# Streamlit local config
 .streamlit/secrets.toml
 
-# OS / editor
-Thumbs.db
-.DS_Store
 .vscode/
 .idea/
+Thumbs.db
+.DS_Store
